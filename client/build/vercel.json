@@ -2,4 +2,10 @@
   "rewrites": [
     { "rewrites": [{ "source": "/(.*)", "destination": "/" }
   ]
+};
+{
+  "builds": [{
+    "src": "subfolder/package.json",
+    "use": "@vercel/static-build"
+  }]
 }
