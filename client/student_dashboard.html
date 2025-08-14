@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Lab Assignment Portal</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f4f8;
+      font-family: 'Times New Roman', Times, serif;
+      padding: 20px;
+      margin: 0;
+    }
+    .container, .student-dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 30px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+    }
+    h2 {
+      color: #1976d2;
+      margin-bottom: 18px;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    .input-group {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+    select, input {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #bfc8d6;
+      font-size: 1rem;
+      width: 80%;
+      max-width: 250px;
+    }
+    button {
+      background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+      color: #fff;
+      border: none;
+      padding: 12px 0;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+      transition: background 0.2s, box-shadow 0.2s;
+      width: 80%;
+      max-width: 250px;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+      box-shadow: 0 4px 16px rgba(30,64,175,0.12);
+    }
+    .dashboard {
+      margin-top: 24px;
+      background: #f0f4fa;
+      border-radius: 8px;
+      padding: 16px 14px;
+      color: #374151;
+      font-size: 1.08rem;
+      box-shadow: 0 1px 4px rgba(30,64,175,0.04);
+      text-align: left;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Student Dashboard</h2>
+    <div class="input-group" id="login-group">
+  <input type="text" id="username" placeholder="Enter your username" required />
+  <input type="password" id="password" placeholder="Enter your password" required />
+  <button onclick="loginStudent()">Login</button>
+    </div>
+    <div class="input-group hidden" id="subject-group">
+      <select id="subject">
+        <option value="">Select Subject</option>
+        <option value="C++">C++</option>
+        <option value="Python">Python</option>
+        <option value="Machine learning">Machine learning</option>
+      </select>
+      <button onclick="fetchAssignment()">Get Lab Question</button>
+    </div>
+    <div class="dashboard hidden" id="dashboard">
+      <div id="questionsContainer"></div>
+      <div id="lastAsked"></div>
+    </div>
+  </div>
+  <script>
+    let loggedIn = false;
+    let username = '';
+    function loginStudent() {
+      username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      fetch('http://localhost:3001/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role: 'student' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          loggedIn = true;
+          document.getElementById('login-group').classList.add('hidden');
+          document.getElementById('subject-group').classList.remove('hidden');
+        } else {
+          alert('Login failed. Please check your credentials.');
+        }
+      });
+    }
+    function fetchAssignment() {
+      const subject = document.getElementById('subject').value;
+      if (!subject) { alert('Please select a subject.'); return; }
+      fetch('http://localhost:3001/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, subject })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('dashboard').classList.remove('hidden');
+        // Fetch all assignments for this user and subject
+        fetch('http://localhost:3001/assignments')
+          .then(res => res.json())
+          .then(all => {
+            const relevant = all.filter(a => a.student === username && a.subject === subject);
+            let html = '';
+            let institution = 'Institute of Technology'; // Example, replace with real data if available
+            if (relevant.length === 0 && (subject === 'Python' || subject === 'Machine learning')) {
+              html = `<div style='background:#fff3cd;color:#856404;padding:24px;border-radius:12px;margin:24px 0;font-size:1.15rem;text-align:center;'>No lab question has been assigned yet for ${subject}. Please contact your instructor or try again later.</div>`;
+            }
+            relevant.slice(-3).forEach((q, idx) => {
+          let color = q.status === 'not attempted' ? '#e53935' : (q.status === 'attempted' ? '#fbc02d' : '#43a047');
+          let statusText = q.status.charAt(0).toUpperCase() + q.status.slice(1);
+          let icon = '';
+          if (subject === 'C++') {
+            icon = `<img src='https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg' alt='C++' style='width:40px;height:40px;vertical-align:middle;margin-right:12px;'>`;
+          } else if (subject === 'Python') {
+            icon = `<img src='https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' alt='Python' style='width:40px;height:40px;vertical-align:middle;margin-right:12px;'>`;
+          } else if (subject === 'Machine learning') {
+            icon = `<img src='https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg' alt='ML' style='width:40px;height:40px;vertical-align:middle;margin-right:12px;'>`;
+          }
+          html += `<div style="position:relative;background:linear-gradient(90deg,#f6f8fa 60%,#e3f0ff 100%);border-radius:20px;box-shadow:0 4px 18px rgba(30,64,175,0.13);margin-bottom:36px;padding:36px 4vw 36px 4vw;max-width:900px;width:100%;min-width:320px;box-sizing:border-box;text-align:left;margin:32px auto;">
+            <span style='position:absolute;top:24px;right:32px;font-weight:700;color:${color};background:#f0f4fa;padding:10px 28px;border-radius:12px;font-size:1.12rem;'>${statusText}</span>
+            <div style='font-size:1.35rem;font-weight:700;margin-bottom:14px;display:flex;align-items:left;'>${icon} Lab Question ${relevant.length-idx} (${subject})</div>
+            <div style='font-size:1.15rem;font-weight:500;margin-bottom:14px;'>${formattedQuestion}</div>
+            <div style='font-size:1.08rem;margin-bottom:8px;'><b>Assigned:</b> ${new Date(q.assigned_date).toLocaleString()}</div>
+            <div style='font-size:1.08rem;margin-bottom:8px;'><b>Time Limit:</b> ${q.time_limit} min</div>
+            ${institution ? `<div style='font-size:1.08rem;margin-bottom:8px;'><b>Asked by:</b> ${institution}</div>` : ''}
+            <button class="attempt-btn" onclick="window.open('https://www.onlinegdb.com/online_${q.subject ? q.subject.toLowerCase().replace(/\s/g, '') : 'compiler'}', '_blank')">Attempt Question</button>
+          </div>`;
+              // Highlight headings, requirements, and concepts
+              let formattedQuestion = q.question
+                .replace(/##\s*Lab Question:/gi, '<span style="font-size:1.18rem;font-weight:700;color:#1976d2;">Lab Question:</span>')
+                .replace(/\*\*Objective:\*\*/gi, '<span style="font-weight:700;color:#1565c0;">Objective:</span>')
+                .replace(/\*\*Requirements:\*\*/gi, '<span style="font-weight:700;color:#388e3c;">Requirements:</span>')
+                .replace(/\*\*Concepts:\*\*/gi, '<span style="font-weight:700;color:#fbc02d;">Concepts:</span>')
+                .replace(/\*\*(.*?)\*\*/g, '<span style="font-weight:700;">$1</span>');
+              html += `<div style="position:relative;background:linear-gradient(90deg,#f6f8fa 60%,#e3f0ff 100%);border-radius:20px;box-shadow:0 4px 18px rgba(30,64,175,0.13);margin-bottom:36px;padding:36px 4vw 36px 4vw;max-width:900px;width:100%;min-width:320px;box-sizing:border-box;text-align:left;margin:32px auto;">
+                <span style='position:absolute;top:24px;right:32px;font-weight:700;color:${color};background:#f0f4fa;padding:10px 28px;border-radius:12px;font-size:1.12rem;'>${statusText}</span>
+                <div style='font-size:1.35rem;font-weight:700;margin-bottom:14px;display:flex;align-items:left;'>${icon} Lab Question ${relevant.length-idx} (${subject})</div>
+                <div style='font-size:1.15rem;font-weight:500;margin-bottom:14px;'>${formattedQuestion}</div>
+                <div style='font-size:1.08rem;margin-bottom:8px;'><b>Assigned:</b> ${new Date(q.assigned_date).toLocaleString()}</div>
+                <div style='font-size:1.08rem;margin-bottom:8px;'><b>Time Limit:</b> ${q.time_limit} min</div>
+                ${institution ? `<div style='font-size:1.08rem;margin-bottom:8px;'><b>Asked by:</b> ${institution}</div>` : ''}
+              </div>`;
+            });
+            document.getElementById('questionsContainer').innerHTML = html;
+            // Show last asked question (if more than one)
+            document.getElementById('lastAsked').innerHTML = '';
+          });
+      });
+    }
+
+    function showStatusActions(status) {
+      const actions = document.getElementById('actions');
+      actions.innerHTML = '';
+      if (status === 'not attempted') {
+        actions.innerHTML = '<button onclick="updateStatus(\'attempted\')">Mark as Attempted</button>';
+      } else if (status === 'attempted') {
+        actions.innerHTML = '<button onclick="updateStatus(\'submitted\')">Mark as Submitted</button>';
+      } else if (status === 'submitted') {
+        actions.innerHTML = '<span style="color:green;font-weight:600;">Submitted</span>';
+      }
+    }
+
+    function updateStatus(newStatus) {
+      fetch('http://localhost:3001/assignment/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, status: newStatus })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('status').innerText = 'Status: ' + newStatus;
+          showStatusActions(newStatus);
+        } else {
+          alert('Failed to update status.');
+        }
+      });
+    }
+  </script>
+</body>
+<footer style="width: 70vx;text-align:center;padding:18px 0 8px 0;font-size:1.08rem;color:#1976d2;background:#f6f8fa;position:fixed;bottom:0;left:0;z-index:100;">
+  Prototype created by Shreya 
+</footer>
+</html>
