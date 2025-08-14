@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Assignment App</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #e3f0ff 0%, #f6f8fa 100%);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      margin-top: 48px;
+      padding: 40px 32px 32px 32px;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(30, 64, 175, 0.10);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+    .icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    h1 {
+      color: #1a237e;
+      margin-bottom: 18px;
+      font-size: 2.1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .guide {
+      font-size: 1.08rem;
+      color: #374151;
+      margin-bottom: 28px;
+      text-align: left;
+      background: #f0f4fa;
+      border-radius: 8px;
+      padding: 16px 14px;
+      box-shadow: 0 1px 4px rgba(30,64,175,0.04);
+    }
+    .guide strong {
+      color: #1976d2;
+    }
+    .login-btn {
+      background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+      color: #fff;
+      border: none;
+      padding: 14px 38px;
+      border-radius: 6px;
+      font-size: 1.15rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 18px;
+      box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .login-btn:hover {
+      background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+      box-shadow: 0 4px 16px rgba(30,64,175,0.12);
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 18px 6px;
+        margin-top: 16px;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="icon">
+      <!-- Lab flask SVG icon -->
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+        <ellipse cx="32" cy="54" rx="18" ry="6" fill="#1976d2" opacity="0.15"/>
+        <path d="M20 10v8l-12 28a6 6 0 0 0 5.6 8h36.8a6 6 0 0 0 5.6-8L44 18v-8" stroke="#1976d2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="#fff"/>
+        <path d="M32 10v44" stroke="#1976d2" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="32" cy="32" r="4" fill="#42a5f5"/>
+      </svg>
+    </span>
+    <h1>Lab Assignment Portal</h1>
+    <div class="guide">
+      <strong>For Students:</strong><br>
+      &bull; Sign up or log in to receive a unique lab question of equal difficulty.<br>
+      &bull; Complete your assigned question and submit as instructed.<br>
+      &bull; Use the dashboard to track your progress and submissions.<br>
+    </div>
+  <button class="login-btn" onclick="window.location.href='login.html'">Go to Login Page</button>
+  </div>
+</body>
+</html>
