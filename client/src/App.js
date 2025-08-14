@@ -16,6 +16,8 @@ function App() {
           path="/student" 
           element={role === 'student' ? <StudentDashboard /> : <Navigate to="/" />} 
         />
+  {/* Catch-all route for unmatched paths */}
+  <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );
