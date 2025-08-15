@@ -5,6 +5,8 @@ This web application addresses the issue of students receiving identical lab que
 - Login/Signup for students and faculty
 - Student dashboard with unique but equally difficult lab questions
 - Faculty dashboard to view student-question assignments
+  <img width="1907" height="861" alt="Screenshot 2025-08-15 104143" src="https://github.com/user-attachments/assets/66ff8f03-1a31-47af-a038-2e0fb8d0e323" />
+
 
 ## Features
 1. **Authentication**: Separate login/signup for students and faculty
