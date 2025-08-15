@@ -12,6 +12,8 @@ This web application addresses the issue of students receiving identical lab que
 <img width="1346" height="833" alt="image" src="https://github.com/user-attachments/assets/5084a861-eae8-4fb1-9241-ac64ffef38fc" />
 
 <img width="1335" height="836" alt="Screenshot 2025-08-15 110559" src="https://github.com/user-attachments/assets/9fe0b196-179c-482e-98be-009511278c84" />
+<img width="1744" height="857" alt="image" src="https://github.com/user-attachments/assets/351a1615-a94f-410e-a6eb-9257935c351e" />
+<img width="1840" height="822" alt="image" src="https://github.com/user-attachments/assets/1539cee5-c475-4196-a087-b4b74d43d252" />
 
 
 
